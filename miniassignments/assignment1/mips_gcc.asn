@@ -1,0 +1,115 @@
+$LC0:
+        .ascii  "fibanacci number is even\000"
+$LC1:
+        .ascii  "fibanacci number is odd\000"
+$LC3:
+        .ascii  "\012%f\000"
+main:
+        addiu   $sp,$sp,-64
+        sw      $31,60($sp)
+        sw      $fp,56($sp)
+        move    $fp,$sp
+        jal     clock
+        nop
+
+        sw      $2,40($fp)
+        sw      $0,24($fp)
+        li      $2,1                        # 0x1
+        sw      $2,28($fp)
+        sw      $0,36($fp)
+        b       $L2
+        nop
+
+$L3:
+        lw      $3,24($fp)
+        lw      $2,28($fp)
+        nop
+        addu    $2,$3,$2
+        sw      $2,32($fp)
+        lw      $2,28($fp)
+        nop
+        sw      $2,24($fp)
+        lw      $2,32($fp)
+        nop
+        sw      $2,28($fp)
+        lw      $2,36($fp)
+        nop
+        addiu   $2,$2,1
+        sw      $2,36($fp)
+$L2:
+        lw      $3,36($fp)
+        li      $2,65536                    # 0x10000
+        ori     $2,$2,0x86a0
+        sltu    $2,$3,$2
+        bne     $2,$0,$L3
+        nop
+
+        lw      $2,32($fp)
+        nop
+        andi    $2,$2,0x1
+        bne     $2,$0,$L4
+        nop
+
+        lui     $2,%hi($LC0)
+        addiu   $4,$2,%lo($LC0)
+        jal     printf
+        nop
+
+        b       $L5
+        nop
+
+$L4:
+        lui     $2,%hi($LC1)
+        addiu   $4,$2,%lo($LC1)
+        jal     printf
+        nop
+
+$L5:
+        jal     clock
+        nop
+
+        sw      $2,44($fp)
+        lw      $3,44($fp)
+        lw      $2,40($fp)
+        nop
+        subu    $2,$3,$2
+        move    $4,$2
+        jal     __floatsidf
+        nop
+
+        lui     $4,%hi($LC2)
+        lw      $7,%lo($LC2+4)($4)
+        lw      $6,%lo($LC2)($4)
+        move    $5,$3
+        move    $4,$2
+        jal     __divdf3
+        nop
+
+        sw      $3,52($fp)
+        sw      $2,48($fp)
+        lui     $2,%hi($LC2)
+        lw      $7,%lo($LC2+4)($2)
+        lw      $6,%lo($LC2)($2)
+        lw      $5,52($fp)
+        lw      $4,48($fp)
+        jal     __muldf3
+        nop
+
+        move    $7,$3
+        move    $6,$2
+        lui     $2,%hi($LC3)
+        addiu   $4,$2,%lo($LC3)
+        jal     printf
+        nop
+
+        move    $2,$0
+        move    $sp,$fp
+        lw      $31,60($sp)
+        lw      $fp,56($sp)
+        addiu   $sp,$sp,64
+        jr      $31
+        nop
+
+$LC2:
+        .word   1093567616
+        .word   0
