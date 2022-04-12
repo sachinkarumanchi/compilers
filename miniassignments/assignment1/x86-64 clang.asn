@@ -1,0 +1,68 @@
+.LCPI0_0:
+        .quad   0x412e848000000000              # double 1.0E+6
+main:                                   # @main
+        push    rbp
+        mov     rbp, rsp
+        sub     rsp, 64
+        mov     dword ptr [rbp - 4], 0
+        call    clock@PLT
+        mov     qword ptr [rbp - 16], rax
+        mov     dword ptr [rbp - 36], 0
+        mov     dword ptr [rbp - 40], 1
+        mov     dword ptr [rbp - 52], 0
+.LBB0_1:                                # %for.cond
+        cmp     dword ptr [rbp - 52], 100000
+        jae     .LBB0_4
+        mov     eax, dword ptr [rbp - 36]
+        add     eax, dword ptr [rbp - 40]
+        cdqe
+        mov     qword ptr [rbp - 48], rax
+        mov     eax, dword ptr [rbp - 40]
+        mov     dword ptr [rbp - 36], eax
+        mov     rax, qword ptr [rbp - 48]
+        mov     dword ptr [rbp - 40], eax
+        mov     eax, dword ptr [rbp - 52]
+        add     eax, 1
+        mov     dword ptr [rbp - 52], eax
+        jmp     .LBB0_1
+.LBB0_4:                                # %for.end
+        mov     rax, qword ptr [rbp - 48]
+        mov     ecx, 2
+        cqo
+        idiv    rcx
+        cmp     rdx, 0
+        jne     .LBB0_6
+        lea     rdi, [rip + .L.str]
+        mov     al, 0
+        call    printf@PLT
+        jmp     .LBB0_7
+.LBB0_6:                                # %if.else
+        lea     rdi, [rip + .L.str.1]
+        mov     al, 0
+        call    printf@PLT
+.LBB0_7:                                # %if.end
+        call    clock@PLT
+        mov     qword ptr [rbp - 24], rax
+        mov     rax, qword ptr [rbp - 24]
+        sub     rax, qword ptr [rbp - 16]
+        cvtsi2sd        xmm0, rax
+        movsd   xmm1, qword ptr [rip + .LCPI0_0] # xmm1 = mem[0],zero
+        divsd   xmm0, xmm1
+        movsd   qword ptr [rbp - 32], xmm0
+        movsd   xmm0, qword ptr [rip + .LCPI0_0] # xmm0 = mem[0],zero
+        mulsd   xmm0, qword ptr [rbp - 32]
+        lea     rdi, [rip + .L.str.2]
+        mov     al, 1
+        call    printf@PLT
+        xor     eax, eax
+        add     rsp, 64
+        pop     rbp
+        ret
+.L.str:
+        .asciz  "fibanacci number is even"
+
+.L.str.1:
+        .asciz  "fibanacci number is odd"
+
+.L.str.2:
+        .asciz  "\n%f"
