@@ -1,0 +1,71 @@
+.LC0:
+        .string "fibanacci number is even"
+.LC1:
+        .string "fibanacci number is odd"
+.LC2:
+        .string "\n%f"
+main:
+        stp     x29, x30, [sp, -64]!
+        mov     x29, sp
+        bl      clock
+        str     x0, [sp, 32]
+        str     wzr, [sp, 60]
+        mov     w0, 1
+        str     w0, [sp, 56]
+        str     wzr, [sp, 44]
+        b       .L2
+.L3:
+        ldr     w1, [sp, 60]
+        ldr     w0, [sp, 56]
+        add     w0, w1, w0
+        sxtw    x0, w0
+        str     x0, [sp, 48]
+        ldr     w0, [sp, 56]
+        str     w0, [sp, 60]
+        ldr     x0, [sp, 48]
+        str     w0, [sp, 56]
+        ldr     w0, [sp, 44]
+        add     w0, w0, 1
+        str     w0, [sp, 44]
+.L2:
+        ldr     w1, [sp, 44]
+        mov     w0, 34463
+        movk    w0, 0x1, lsl 16
+        cmp     w1, w0
+        bls     .L3
+        ldr     x0, [sp, 48]
+        and     x0, x0, 1
+        cmp     x0, 0
+        bne     .L4
+        adrp    x0, .LC0
+        add     x0, x0, :lo12:.LC0
+        bl      printf
+        b       .L5
+.L4:
+        adrp    x0, .LC1
+        add     x0, x0, :lo12:.LC1
+        bl      printf
+.L5:
+        bl      clock
+        str     x0, [sp, 24]
+        ldr     x1, [sp, 24]
+        ldr     x0, [sp, 32]
+        sub     x0, x1, x0
+        fmov    d0, x0
+        scvtf   d0, d0
+        mov     x0, 145685290680320
+        movk    x0, 0x412e, lsl 48
+        fmov    d1, x0
+        fdiv    d0, d0, d1
+        str     d0, [sp, 16]
+        ldr     d0, [sp, 16]
+        mov     x0, 145685290680320
+        movk    x0, 0x412e, lsl 48
+        fmov    d1, x0
+        fmul    d0, d0, d1
+        adrp    x0, .LC2
+        add     x0, x0, :lo12:.LC2
+        bl      printf
+        mov     w0, 0
+        ldp     x29, x30, [sp], 64
+        ret
