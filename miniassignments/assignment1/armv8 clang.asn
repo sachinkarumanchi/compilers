@@ -1,0 +1,84 @@
+.LCPI0_0:
+        .xword  0x412e848000000000              // double 1.0E+6
+main:                                   // @main
+        sub     sp, sp, #80
+        stp     x29, x30, [sp, #64]             // 16-byte Folded Spill
+        add     x29, sp, #64
+        stur    wzr, [x29, #-4]
+        bl      clock
+        stur    x0, [x29, #-16]
+        str     wzr, [sp, #28]
+        mov     w8, #1
+        str     w8, [sp, #24]
+        str     wzr, [sp, #12]
+        b       .LBB0_1
+.LBB0_1:                                // =>This Inner Loop Header: Depth=1
+        ldr     w8, [sp, #12]
+        mov     w9, #34464
+        movk    w9, #1, lsl #16
+        subs    w8, w8, w9
+        b.hs    .LBB0_4
+        b       .LBB0_2
+.LBB0_2:                                //   in Loop: Header=BB0_1 Depth=1
+        ldr     w8, [sp, #28]
+        ldr     w9, [sp, #24]
+        add     w9, w8, w9
+        mov     w8, w9
+        sxtw    x8, w8
+        str     x8, [sp, #16]
+        ldr     w8, [sp, #24]
+        str     w8, [sp, #28]
+        ldr     x8, [sp, #16]
+        str     w8, [sp, #24]
+        b       .LBB0_3
+.LBB0_3:                                //   in Loop: Header=BB0_1 Depth=1
+        ldr     w8, [sp, #12]
+        add     w8, w8, #1
+        str     w8, [sp, #12]
+        b       .LBB0_1
+.LBB0_4:
+        ldr     x8, [sp, #16]
+        mov     x10, #2
+        sdiv    x9, x8, x10
+        mul     x9, x9, x10
+        subs    x8, x8, x9
+        cbnz    x8, .LBB0_6
+        b       .LBB0_5
+.LBB0_5:
+        adrp    x0, .L.str
+        add     x0, x0, :lo12:.L.str
+        bl      printf
+        b       .LBB0_7
+.LBB0_6:
+        adrp    x0, .L.str.1
+        add     x0, x0, :lo12:.L.str.1
+        bl      printf
+        b       .LBB0_7
+.LBB0_7:
+        bl      clock
+        stur    x0, [x29, #-24]
+        ldur    x8, [x29, #-24]
+        ldur    x9, [x29, #-16]
+        subs    x8, x8, x9
+        scvtf   d0, x8
+        adrp    x8, .LCPI0_0
+        ldr     d1, [x8, :lo12:.LCPI0_0]
+        fdiv    d0, d0, d1
+        str     d0, [sp, #32]
+        ldr     d0, [sp, #32]
+        fmul    d0, d0, d1
+        adrp    x0, .L.str.2
+        add     x0, x0, :lo12:.L.str.2
+        bl      printf
+        mov     w0, wzr
+        ldp     x29, x30, [sp, #64]             // 16-byte Folded Reload
+        add     sp, sp, #80
+        ret
+.L.str:
+        .asciz  "fibanacci number is even"
+
+.L.str.1:
+        .asciz  "fibanacci number is odd"
+
+.L.str.2:
+        .asciz  "\n%f"
