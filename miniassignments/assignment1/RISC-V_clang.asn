@@ -1,0 +1,94 @@
+.LCPI0_0:
+        .quad   0x412e848000000000              # double 1.0E+6
+main:                                   # @main
+        addi    sp, sp, -80
+        sd      ra, 72(sp)                      # 8-byte Folded Spill
+        sd      s0, 64(sp)                      # 8-byte Folded Spill
+        addi    s0, sp, 80
+        li      a0, 0
+        sd      a0, -80(s0)                     # 8-byte Folded Spill
+        sw      a0, -20(s0)
+        call    clock@plt
+        mv      a1, a0
+        ld      a0, -80(s0)                     # 8-byte Folded Reload
+        sd      a1, -32(s0)
+        sw      a0, -52(s0)
+        li      a1, 1
+        sw      a1, -56(s0)
+        sw      a0, -68(s0)
+        j       .LBB0_1
+.LBB0_1:                                # =>This Inner Loop Header: Depth=1
+        lw      a1, -68(s0)
+        lui     a0, 24
+        addiw   a0, a0, 1695
+        bltu    a0, a1, .LBB0_4
+        j       .LBB0_2
+.LBB0_2:                                #   in Loop: Header=BB0_1 Depth=1
+        lw      a0, -52(s0)
+        lw      a1, -56(s0)
+        addw    a0, a0, a1
+        sd      a0, -64(s0)
+        lw      a0, -56(s0)
+        sw      a0, -52(s0)
+        ld      a0, -64(s0)
+        sw      a0, -56(s0)
+        j       .LBB0_3
+.LBB0_3:                                #   in Loop: Header=BB0_1 Depth=1
+        lw      a0, -68(s0)
+        addiw   a0, a0, 1
+        sw      a0, -68(s0)
+        j       .LBB0_1
+.LBB0_4:
+        ld      a0, -64(s0)
+        srli    a1, a0, 63
+        add     a1, a1, a0
+        andi    a1, a1, -2
+        sub     a0, a0, a1
+        li      a1, 0
+        bne     a0, a1, .LBB0_6
+        j       .LBB0_5
+.LBB0_5:
+.LBB0_8:                                # Label of block must be emitted
+        auipc   a0, %pcrel_hi(.L.str)
+        addi    a0, a0, %pcrel_lo(.LBB0_8)
+        call    printf@plt
+        j       .LBB0_7
+.LBB0_6:
+.LBB0_9:                                # Label of block must be emitted
+        auipc   a0, %pcrel_hi(.L.str.1)
+        addi    a0, a0, %pcrel_lo(.LBB0_9)
+        call    printf@plt
+        j       .LBB0_7
+.LBB0_7:
+        call    clock@plt
+        sd      a0, -40(s0)
+        ld      a0, -40(s0)
+        ld      a1, -32(s0)
+        sub     a0, a0, a1
+        fcvt.d.l        ft0, a0
+.LBB0_10:                               # Label of block must be emitted
+        auipc   a0, %pcrel_hi(.LCPI0_0)
+        addi    a0, a0, %pcrel_lo(.LBB0_10)
+        fld     ft1, 0(a0)
+        fdiv.d  ft0, ft0, ft1
+        fsd     ft0, -48(s0)
+        fld     ft0, -48(s0)
+        fmul.d  ft0, ft0, ft1
+        fmv.x.d a1, ft0
+.LBB0_11:                               # Label of block must be emitted
+        auipc   a0, %pcrel_hi(.L.str.2)
+        addi    a0, a0, %pcrel_lo(.LBB0_11)
+        call    printf@plt
+        li      a0, 0
+        ld      ra, 72(sp)                      # 8-byte Folded Reload
+        ld      s0, 64(sp)                      # 8-byte Folded Reload
+        addi    sp, sp, 80
+        ret
+.L.str:
+        .asciz  "fibanacci number is even"
+
+.L.str.1:
+        .asciz  "fibanacci number is odd"
+
+.L.str.2:
+        .asciz  "\n%f"
